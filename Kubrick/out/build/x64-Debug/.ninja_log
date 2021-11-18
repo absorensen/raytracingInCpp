@@ -1,0 +1,16 @@
+# ninja log v5
+0	315	6589669149759767	Kubrick/CMakeFiles/Kubrick.dir/Kubrick.cpp.obj	7487252cf817707b
+324	701	6589679421435980	Kubrick/Kubrick.exe	9b78b78a5de6d4e5
+0	323	6589679420566678	Kubrick/CMakeFiles/Kubrick.dir/kubrick.cpp.obj	cd1225bd0de2e2c0
+1	7	0	clean	10cefbc2b3eb0a58
+0	428	6589682315719200	Kubrick/CMakeFiles/Kubrick.dir/kubrick.cpp.obj	cd1225bd0de2e2c0
+429	783	6589682316497118	Kubrick/Kubrick.exe	9b78b78a5de6d4e5
+0	5	0	clean	10cefbc2b3eb0a58
+0	581	6589690652809979	Kubrick/CMakeFiles/Kubrick.dir/kubrick.cpp.obj	cd1225bd0de2e2c0
+582	1003	6589690653667690	Kubrick/Kubrick.exe	9b78b78a5de6d4e5
+0	6	0	clean	10cefbc2b3eb0a58
+1	438	6589695998011146	Kubrick/CMakeFiles/Kubrick.dir/kubrick.cpp.obj	cd1225bd0de2e2c0
+439	791	6589695998789073	Kubrick/Kubrick.exe	9b78b78a5de6d4e5
+0	6	0	clean	10cefbc2b3eb0a58
+1	325	6589696358111340	Kubrick/CMakeFiles/Kubrick.dir/kubrick.cpp.obj	cd1225bd0de2e2c0
+326	682	6589696358954172	Kubrick/Kubrick.exe	9b78b78a5de6d4e5

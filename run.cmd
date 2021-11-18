@@ -1,0 +1,1 @@
+C:\Programming\Kubrick\Kubrick\out\build\x64-Debug\Kubrick\Kubrick.exe > image.ppm
