@@ -1,27 +1,19 @@
 ﻿// Kubrick.cpp : Defines the entry point for the application.
 //
 
-#include "kubrick.hpp"
+#include "utility.hpp"
 #include "color.hpp"
-#include "vec3.hpp"
-#include "ray.hpp"
+#include "hittableList.hpp"
+#include "sphere.hpp"
 
 #include <iostream>
 
 using namespace std;
 
-bool hitSphere(point3 const& center, double const radius, ray const & r) {
-	vec3 const oc{ r.getOrigin() - center };
-	double const a{ dot(r.getDirection(), r.getDirection()) };
-	double const b{ 2.0 * dot(oc, r.getDirection()) };
-	double const c{ dot(oc, oc) - radius * radius };
-	double const discriminant{ b * b - 4.0 * a * c };
-	return (discriminant > 0.0);
-}
-
-color rayColor(ray const& r) {
-	if (hitSphere(point3{ 0.0, 0.0, -1.0 }, 0.5, r)) {
-		return color{ 1.0, 0.0, 0.0 };
+color rayColor(ray const& r, hittable const & world) {
+	hitRecord rec;
+	if (world.hit(r, 0.0, infinity, rec)) {
+		return 0.5 * (rec.normal + color{1.0, 1.0, 1.0});
 	}
 	vec3 const unitDirection{ unitVector(r.getDirection()) };
 	double const t{ 0.5 * (unitDirection.y() + 1.0) };
@@ -34,6 +26,12 @@ int main()
 	double const aspectRatio{ 16.0 / 9.0 };
 	int const imageWidth{ 400 };
 	int const imageHeight{ static_cast<int>(imageWidth / aspectRatio) };
+
+	// World
+	hittableList world;
+	world.add(make_shared<sphere>(point3{ 0.0, 0.0, -1.0 }, 0.5));
+	world.add(make_shared<sphere>(point3{ 0.0, -100.5, -1.0 }, 100.0));
+
 
 	// Camera
 	double const viewportHeight{ 2.0 };
@@ -54,7 +52,7 @@ int main()
 			auto u = double(i) / (imageWidth - 1);
 			auto v = double(j) / (imageHeight - 1);
 			ray r(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
-			color pixelColor = rayColor(r);
+			color pixelColor = rayColor(r, world);
 			writeColor(cout, pixelColor);
 		}
 	}

@@ -11,6 +11,11 @@ add_executable (Kubrick
 "stb_image_write.h" 
 "vec3.hpp" 
 "color.hpp"
-"ray.hpp")
+"ray.hpp" 
+"hittable.hpp" 
+"sphere.hpp" 
+"hittableList.hpp" 
+"utility.hpp"
+)
 
 # TODO: Add tests and install targets if needed.
