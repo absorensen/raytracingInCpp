@@ -20,6 +20,11 @@ public:
 	double y() const { return e[1]; }
 	double z() const { return e[2]; }
 
+	bool nearZero() const {
+		double const s{ 1e-10 };
+		return (fabs(e[0]) < s)&& (fabs(e[1]) < s) && (fabs(e[2]) < s);
+	}
+
 	vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
 	double operator[](int i) const { return e[i]; }
 	double& operator[](int i) { return e[i]; }
@@ -58,6 +63,8 @@ public:
 	inline static vec3 random(double const min, double const max) {
 		return vec3{ randomDouble(min, max), randomDouble(min, max), randomDouble(min, max) };
 	}
+
+	
 
 
 private:
@@ -124,6 +131,11 @@ inline static vec3 randomUnitVector() {
 inline static vec3 randomInHemisphere(vec3 const& normal) {
 	vec3 const inUnitSphere{ randomInUnitSphere() };
 	return dot(inUnitSphere, normal) > 0.0 ? inUnitSphere : -inUnitSphere;
+}
+
+inline static vec3 reflect(vec3 const& v, vec3 const& n) {
+	return v - 2.0 * dot(v, n) * n;
+
 }
 
 using point3 = vec3;

@@ -1,11 +1,15 @@
 #ifndef HITTABLE_HPP
 #define HITTABLE_HPP
 
-#include "ray.hpp"
+#include "utility.hpp"
+
+class material;
+
 
 struct hitRecord {
 	point3 p;
 	vec3 normal;
+	shared_ptr<material> matPtr;
 	double t;
 	bool frontFace;
 
