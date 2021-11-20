@@ -135,7 +135,13 @@ inline static vec3 randomInHemisphere(vec3 const& normal) {
 
 inline static vec3 reflect(vec3 const& v, vec3 const& n) {
 	return v - 2.0 * dot(v, n) * n;
+}
 
+inline static vec3 refract(vec3 const& uv, vec3 const& n, double const etaIOverEtaT) {
+	double const cosTheta{ fmin(dot(-uv, n), 1.0) };
+	vec3 const rOutPerp{ etaIOverEtaT * (uv + cosTheta * n) };
+	vec3 const rOutParallel{ -sqrt(fabs(1.0 - rOutPerp.lengthSquared())) * n };
+	return rOutPerp + rOutParallel;
 }
 
 using point3 = vec3;

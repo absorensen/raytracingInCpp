@@ -56,4 +56,49 @@ public:
 private:
 };
 
+class dielectric : public material {
+public:
+	double ir;
+
+private:
+
+
+public: 
+	dielectric(double indexOfRefraction) : ir(indexOfRefraction){}
+
+	virtual bool scatter(ray const& rIn, hitRecord const& rec, color& attenuation, ray& scattered) const override{
+		attenuation = color(1.0, 1.0, 1.0);
+		double const refractionRatio{ rec.frontFace ? (1.0 / ir) : ir };
+
+		vec3 const unitDirection{ unitVector(rIn.getDirection()) };
+
+		double const cosTheta{ fmin(dot(-unitDirection, rec.normal), 1.0) };
+		double const sinTheta{ sqrt(1.0 - cosTheta * cosTheta) };
+
+		bool const cannotRefract{ refractionRatio * sinTheta > 1.0 };
+		
+		vec3 direction;
+
+		if (cannotRefract || _reflectance(cosTheta, refractionRatio) > randomDouble()) {
+			direction = reflect(unitDirection, rec.normal);
+		}
+		else {
+			direction = refract(unitDirection, rec.normal, refractionRatio);
+		}
+
+		scattered = ray{ rec.p, direction };
+
+		return true;
+	}
+
+private:
+
+	static double _reflectance(double const cosine, double const reflectanceIndex) {
+		double r0{ (1.0 - reflectanceIndex) / (1.0 + reflectanceIndex) };
+		r0 = r0 * r0;
+		return r0 + (1.0 - r0) * pow((1.0 - cosine), 5.0);
+	}
+
+};
+
 #endif
