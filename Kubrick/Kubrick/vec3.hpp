@@ -51,6 +51,15 @@ public:
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 	}
 
+	inline static vec3 random() {
+		return vec3{ randomDouble(), randomDouble(), randomDouble() };
+	}
+
+	inline static vec3 random(double const min, double const max) {
+		return vec3{ randomDouble(min, max), randomDouble(min, max), randomDouble(min, max) };
+	}
+
+
 private:
 
 };
@@ -84,20 +93,37 @@ inline vec3 operator/(vec3 v, double t) {
 	return (1.0 / t) * v;
 }
 
-inline double dot(vec3 const & u, vec3 const & v) {
+inline static double dot(vec3 const & u, vec3 const & v) {
 	return u.e[0] * v.e[0]
 		+ u.e[1] * v.e[1]
 		+ u.e[2] * v.e[2];
 }
 
-inline vec3 cross(vec3 const & u, vec3 const & v) {
+inline static vec3 cross(vec3 const & u, vec3 const & v) {
 	return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
 		u.e[2] * v.e[0] - u.e[0] * v.e[2],
 		u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 }
 
-inline vec3 unitVector(vec3 v) {
+inline static vec3 unitVector(vec3 v) {
 	return v / v.length();
+}
+
+inline static vec3 randomInUnitSphere() {
+	for (;;) {
+		vec3 const p{ vec3::random(-1.0, 1.0) };
+		if (p.lengthSquared() >= 1.0) continue;
+		return p;
+	}
+}
+
+inline static vec3 randomUnitVector() {
+	return unitVector(randomInUnitSphere());
+}
+
+inline static vec3 randomInHemisphere(vec3 const& normal) {
+	vec3 const inUnitSphere{ randomInUnitSphere() };
+	return dot(inUnitSphere, normal) > 0.0 ? inUnitSphere : -inUnitSphere;
 }
 
 using point3 = vec3;

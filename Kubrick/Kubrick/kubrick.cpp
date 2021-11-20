@@ -1,6 +1,7 @@
 ﻿// Kubrick.cpp : Defines the entry point for the application.
 //
 
+#include "camera.hpp"
 #include "utility.hpp"
 #include "color.hpp"
 #include "hittableList.hpp"
@@ -10,10 +11,16 @@
 
 using namespace std;
 
-color rayColor(ray const& r, hittable const & world) {
+color rayColor(ray const& r, hittable const & world, int const depth) {
 	hitRecord rec;
-	if (world.hit(r, 0.0, infinity, rec)) {
-		return 0.5 * (rec.normal + color{1.0, 1.0, 1.0});
+
+	if (depth <= 0) {
+		return color{ 0.0, 0.0, 0.0};
+	}
+
+	if (world.hit(r, 0.0000000000001, infinity, rec)) {
+		point3 const target{ rec.p + rec.normal + randomInHemisphere(rec.normal) };
+		return 0.5 * rayColor(ray{ rec.p, target - rec.p }, world, depth - 1);
 	}
 	vec3 const unitDirection{ unitVector(r.getDirection()) };
 	double const t{ 0.5 * (unitDirection.y() + 1.0) };
@@ -26,6 +33,8 @@ int main()
 	double const aspectRatio{ 16.0 / 9.0 };
 	int const imageWidth{ 400 };
 	int const imageHeight{ static_cast<int>(imageWidth / aspectRatio) };
+	int const samplesPerPixel{ 100 };
+	int const maxDepth{ 50 };
 
 	// World
 	hittableList world;
@@ -34,29 +43,25 @@ int main()
 
 
 	// Camera
-	double const viewportHeight{ 2.0 };
-	double const viewportWidth{ aspectRatio * viewportHeight };
-	double const focalLength{ 1.0 };
-
-	point3 const origin{ 0.0, 0.0, 0.0 };
-	vec3 const horizontal{ viewportWidth, 0.0, 0.0 };
-	vec3 const vertical{ 0.0, viewportHeight, 0.0 };
-	vec3 const lowerLeftCorner{ origin - horizontal * 0.5 - vertical * 0.5 - vec3{0.0, 0.0, focalLength} };
+	camera cam;
 
 	// Render
 	cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
 
 	for (int j{ imageHeight - 1 }; j >= 0; --j) {
-		cerr << "\rScanlines remaining: " << j << " " << flush;
+		std::cerr << "\rScanlines remaining: " << j << " " << flush;
 		for (int i{ 0 }; i < imageWidth; ++i) {
-			auto u = double(i) / (imageWidth - 1);
-			auto v = double(j) / (imageHeight - 1);
-			ray r(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
-			color pixelColor = rayColor(r, world);
-			writeColor(cout, pixelColor);
+			color pixelColor{ 0.0, 0.0, 0.0 };
+			for (int s{ 0 }; s < samplesPerPixel; ++s) {
+				double const u{ (static_cast<double>(i) + randomDouble()) / static_cast<double>(imageWidth - 1) };
+				double const v{ (static_cast<double>(j) + randomDouble()) / static_cast<double>(imageHeight - 1) };
+				ray r{ cam.getRay(u, v) };
+				pixelColor += rayColor(r, world, maxDepth);
+			}
+			writeColor(cout, pixelColor, samplesPerPixel);
 		}
 	}
-	cerr << "\nDone.\n";
+	std::cerr << "\nDone.\n";
 
 
 

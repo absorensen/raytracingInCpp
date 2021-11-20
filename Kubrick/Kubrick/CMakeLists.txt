@@ -16,6 +16,6 @@ add_executable (Kubrick
 "sphere.hpp" 
 "hittableList.hpp" 
 "utility.hpp"
-)
+ "camera.hpp")
 
 # TODO: Add tests and install targets if needed.
