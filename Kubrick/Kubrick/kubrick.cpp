@@ -32,35 +32,77 @@ color rayColor(ray const& r, hittable const & world, int const depth) {
 	return (1.0 - t) * color { 1.0, 1.0, 1.0 } + t * color{ 0.5, 0.7, 1.0 };
 }
 
+hittableList randomBallsScene() {
+	hittableList world;
+
+	shared_ptr<lambertian> ground_material{ make_shared<lambertian>(color{ 0.5, 0.5, 0.5 }) };
+	world.add(make_shared<sphere>(point3{ 0.0, -1000.0, 0 }, 1000.0, ground_material));
+
+	for (int a = -11; a < 11; ++a) {
+		for (int b = -11; b < 11; ++b) {
+			double const choose_mat{ randomDouble() };
+			point3 center{ a + 0.9 * randomDouble(), 0.2, b + 0.9 * randomDouble() };
+
+			if ((center - point3{ 4, 0.2, 0 }).length() > 0.9) {
+				shared_ptr<material> sphere_material;
+
+				if (choose_mat < 0.8) {
+					// diffuse
+					vec3 const albedo{ color::random() * color::random() };
+					sphere_material = make_shared<lambertian>(albedo);
+					world.add(make_shared<sphere>(center, 0.2, sphere_material));
+				}
+				else if (choose_mat < 0.95) {
+					// metal
+					color const albedo{ color::random(0.5, 1) };
+					double const fuzz{ randomDouble(0, 0.5) };
+					sphere_material = make_shared<metal>(albedo, fuzz);
+					world.add(make_shared<sphere>(center, 0.2, sphere_material));
+				}
+				else {
+					// glass
+					sphere_material = make_shared<dielectric>(1.5);
+					world.add(make_shared<sphere>(center, 0.2, sphere_material));
+				}
+			}
+		}
+	}
+
+	shared_ptr<dielectric> material1{ make_shared<dielectric>(1.5) };
+	world.add(make_shared<sphere>(point3{ 0.0, 1.0, 0.0 }, 1.0, material1));
+
+	shared_ptr<lambertian> material2{ make_shared<lambertian>(color{0.4, 0.2, 0.1 }) };
+	world.add(make_shared<sphere>(point3{ -4.0, 1.0, 0.0 }, 1.0, material2));
+
+	shared_ptr<metal> material3{ make_shared<metal>(color{0.7, 0.6, 0.5 }, 0.0)};
+	world.add(make_shared<sphere>(point3{ 4.0, 1.0, 0.0 }, 1.0, material3));
+
+	return world;
+}
+
 int main()
 {
 	// Image
-	double const aspectRatio{ 16.0 / 9.0 };
-	int const imageWidth{ 400 };
+	double const aspectRatio{ 3.0 / 2.0 };
+	int const imageWidth{ 600 };
 	int const imageHeight{ static_cast<int>(imageWidth / aspectRatio) };
 	int const samplesPerPixel{ 100 };
-	int const maxDepth{ 10 };
+	int const maxDepth{ 20 };
 
 	// World
-	double const R{ cos(pi * 0.25) };
-	hittableList world;
-
-	shared_ptr<lambertian> material_ground { make_shared<lambertian>(color{0.8, 0.8, 0.0}) };
-	shared_ptr<lambertian> material_center{ make_shared<lambertian>(color{0.1, 0.2, 0.5}) };
-	shared_ptr<dielectric> material_left { make_shared<dielectric>(1.5) };
-	shared_ptr<metal> material_right{ make_shared<metal>(color{0.8, 0.6, 0.2}, 0.0) };
-
-	world.add(make_shared<sphere>(point3{ 0.0, -100.5, -1.0 }, 100.0, material_ground));
-	world.add(make_shared<sphere>(point3{0.0, 0.0, -1.0 }, 0.5, material_center));
-	world.add(make_shared<sphere>(point3{-1.0, 0.0, -1.0 }, 0.5, material_left));
-	world.add(make_shared<sphere>(point3{1.0, 0.0, -1.0 }, 0.5, material_right));
+	hittableList world { randomBallsScene() };
 
 
 	// Camera
-	camera cam{ point3{-2.0, 2.0, 1.0 }, point3{ 0.0, 0.0, -1.0 }, vec3{ 0.0, 1.0, 0.0 }, 90.0, aspectRatio };
+	point3 const lookFrom{ 13.0, 2.0, 3.0 };
+	point3 const lookAt{ 0.0, 0.0, 0.0 };
+	vec3 const vUp{ 0.0, 1.0, 0.0 };
+	double const distToFocus{ 10.0 };
+	double const aperture{ 0.1 };
+	camera cam{ lookFrom, lookAt, vUp, 20.0, aspectRatio, aperture, distToFocus };
 
 	// Render
-	cout << "P3\n" << imageWidth << " " << imageHeight << "\n255\n";
+	cout << "P3\n" << imageWidth << " " << imageHeight << "\n65535\n";
 
 	for (int j{ imageHeight - 1 }; j >= 0; --j) {
 		std::cerr << "\rScanlines remaining: " << j << " " << flush;

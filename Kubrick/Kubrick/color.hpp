@@ -11,15 +11,15 @@ void writeColor(std::ostream& out, color pixelColor, int const samplesPerPixel) 
     double blue{ pixelColor.z() };
 
     double const scale{ 1.0 / static_cast<double>(samplesPerPixel) };
-    red   = sqrt(scale * red);
-    green = sqrt(scale * green);
-    blue  = sqrt(scale * blue);
+    red   = 65536.0 * clamp(sqrt(scale * red), 0.0, 0.999999);
+    green = 65536.0 * clamp(sqrt(scale * green), 0.0, 0.999999);
+    blue  = 65536.0 * clamp(sqrt(scale * blue), 0.0, 0.999999);
 
 
     // Write the translated [0,255] value of each color component.
-    out << static_cast<int>(256.0 * clamp(red,   0.0, 0.999999)) << ' '
-        << static_cast<int>(256.0 * clamp(green, 0.0, 0.999999)) << ' '
-        << static_cast<int>(256.0 * clamp(blue,  0.0, 0.999999)) << '\n';
+    out << static_cast<int>(red) << ' '
+        << static_cast<int>(green) << ' '
+        << static_cast<int>(blue) << '\n';
 
 }
 

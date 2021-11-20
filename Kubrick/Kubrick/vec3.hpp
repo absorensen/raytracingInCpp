@@ -133,6 +133,14 @@ inline static vec3 randomInHemisphere(vec3 const& normal) {
 	return dot(inUnitSphere, normal) > 0.0 ? inUnitSphere : -inUnitSphere;
 }
 
+inline static vec3 randomInUnitDisk() {
+	for (;;) {
+		vec3 p{ vec3{randomDouble(-1.0, 1.0), randomDouble(-1.0, 1.0), 0.0} };
+		if (p.lengthSquared() >= 1.0) continue;
+		return p;
+	}
+}
+
 inline static vec3 reflect(vec3 const& v, vec3 const& n) {
 	return v - 2.0 * dot(v, n) * n;
 }
