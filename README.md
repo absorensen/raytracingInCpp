@@ -1,9 +1,3 @@
-# Kubrick
-My own private experiments in ray tracing
-
-
-Inspirations:
-
-https://www.pbrt.org/
-
+# Raytracing Tutorials
+Implementing Peter Shirleys Tutorials
 https://raytracing.github.io/
