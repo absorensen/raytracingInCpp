@@ -1,1 +1,1 @@
-C:\Programming\Kubrick\Kubrick\out\build\x64-Release\Kubrick\Kubrick.exe > image.ppm
+C:\Programming\raytracingInCpp\raytracingInCpp\out\build\x64-Release\raytracingInCpp\raytracingInCpp.exe > image.ppm
